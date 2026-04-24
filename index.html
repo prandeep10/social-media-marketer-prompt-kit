@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Tools Dashboard</title>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+    }
+
+    body {
+        /* Deep dark background */
+        background-color: #0b0c10;
+        color: #ffffff;
+        min-height: 100vh;
+        padding: 60px 40px;
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    /* --- Background Glowing Orbs for Glassmorphism --- */
+    .bg-shape {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(90px);
+        z-index: -1;
+        animation: float 10s infinite ease-in-out alternate;
+    }
+
+    .shape1 {
+        width: 400px;
+        height: 400px;
+        background: #8a2be2; /* Purple */
+        top: -50px;
+        left: -100px;
+    }
+
+    .shape2 {
+        width: 500px;
+        height: 500px;
+        background: #00d2ff; /* Cyan */
+        bottom: -150px;
+        right: -100px;
+        animation-delay: -5s;
+    }
+
+    .shape3 {
+        width: 300px;
+        height: 300px;
+        background: #ff007f; /* Pink */
+        top: 40%;
+        left: 40%;
+        animation-duration: 15s;
+    }
+
+    @keyframes float {
+        0% { transform: translateY(0) translateX(0) scale(1); }
+        100% { transform: translateY(50px) translateX(50px) scale(1.1); }
+    }
+
+    /* --- Header --- */
+    h1 {
+        text-align: center;
+        margin-bottom: 60px;
+        font-size: 4rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    /* --- Grid Container with 3D Perspective --- */
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 40px;
+        max-width: 1400px;
+        margin: 0 auto;
+        perspective: 1200px; /* Establishes 3D space */
+    }
+
+    /* --- 3D Glassmorphic Cards --- */
+    .card {
+        /* Glassmorphism Background & Blur */
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        
+        /* Light Borders for the glass edge effect */
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-top: 1px solid rgba(255, 255, 255, 0.3);
+        border-left: 1px solid rgba(255, 255, 255, 0.3);
+        
+        border-radius: 24px;
+        padding: 40px;
+        height: 260px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        cursor: pointer;
+        
+        /* 3D Transform Settings */
+        transform-style: preserve-3d;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Internal wrapper to push text forward in 3D space */
+    .card-content {
+        transform-style: preserve-3d;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        justify-content: space-between;
+    }
+
+    /* Hover State for 3D Pop & Tilt */
+    .card:hover {
+        transform: translateY(-15px) rotateX(5deg) rotateY(-5deg) scale(1.03);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.5);
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* Glossy reflection sweep */
+    .card::before {
+        content: "";
+        position: absolute;
+        top: 0; left: -100%; width: 50%; height: 100%;
+        background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);
+        transform: skewX(-20deg);
+        transition: 0.7s;
+    }
+
+    .card:hover::before {
+        left: 150%;
+    }
+
+    /* --- Typography (Pushed out in Z-axis) --- */
+    .title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        transform: translateZ(40px); /* 3D text pop */
+        margin-bottom: 10px;
+    }
+
+    .desc {
+        font-size: 1.1rem;
+        color: #d1d1d1;
+        line-height: 1.5;
+        transform: translateZ(25px);
+    }
+
+    .arrow {
+        align-self: flex-end;
+        font-size: 2.5rem;
+        opacity: 0.8;
+        transform: translateZ(50px);
+        transition: transform 0.3s;
+    }
+
+    .card:hover .arrow {
+        transform: translateZ(50px) translateX(10px);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        h1 { font-size: 2.5rem; }
+        .card { height: auto; min-height: 220px; }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="bg-shape shape1"></div>
+<div class="bg-shape shape2"></div>
+<div class="bg-shape shape3"></div>
+
+<h1>🚀 AI Tools Dashboard</h1>
+
+<div class="grid">
+
+    <div class="card" onclick="navigate('content-calendar.html')">
+        <div class="card-content">
+            <div>
+                <div class="title">Content Calendar</div>
+                <div class="desc">Input dates, select days & generate structured JSON output seamlessly.</div>
+            </div>
+            <div class="arrow">→</div>
+        </div>
+    </div>
+
+    <div class="card" onclick="navigate('video-script-writer.html')">
+        <div class="card-content">
+            <div>
+                <div class="title">Script Writer</div>
+                <div class="desc">Generate high-converting, engaging scripts for reels & videos.</div>
+            </div>
+            <div class="arrow">→</div>
+        </div>
+    </div>
+
+    <div class="card" onclick="navigate('poster-prompt-writer.html')">
+        <div class="card-content">
+            <div>
+                <div class="title">Prompt Writer</div>
+                <div class="desc">Engineer premium, highly detailed AI prompts for custom posters.</div>
+            </div>
+            <div class="arrow">→</div>
+        </div>
+    </div>
+
+    <div class="card" onclick="navigate('poster-generator.html')">
+        <div class="card-content">
+            <div>
+                <div class="title">Poster Generator</div>
+                <div class="desc">Render beautiful posters instantly using AI-driven visual models.</div>
+            </div>
+            <div class="arrow">→</div>
+        </div>
+    </div>
+
+    <div class="card" onclick="navigate('competitor-analysis.html')">
+        <div class="card-content">
+            <div>
+                <div class="title">Competitor Analysis</div>
+                <div class="desc">Deep dive into competitor metrics & discover massive growth opportunities.</div>
+            </div>
+            <div class="arrow">→</div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // Navigation function is now fully active
+    function navigate(page) {
+        window.location.href = page;
+    }
+</script>
+
+</body>
+</html>

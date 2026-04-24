@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Competitor Analysis</title>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+    }
+
+    body {
+        background-color: #0b0c10;
+        color: #ffffff;
+        min-height: 100vh;
+        padding: 120px 40px 60px 40px;
+        position: relative;
+        overflow-x: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* --- Background Orbs (Deep Teal/Emerald for Analytics vibe) --- */
+    .bg-shape {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(100px);
+        z-index: -1;
+        animation: float 12s infinite ease-in-out alternate;
+    }
+
+    .shape1 {
+        width: 500px;
+        height: 500px;
+        background: #004d40; /* Deep Emerald */
+        top: -100px;
+        left: -150px;
+    }
+
+    .shape2 {
+        width: 600px;
+        height: 600px;
+        background: #00251a; /* Very Dark Teal */
+        bottom: -200px;
+        right: -150px;
+        animation-delay: -6s;
+    }
+
+    @keyframes float {
+        0% { transform: translateY(0) translateX(0) scale(1); }
+        100% { transform: translateY(40px) translateX(40px) scale(1.05); }
+    }
+
+    /* --- Common Navbar --- */
+    .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 80px;
+        background: rgba(11, 12, 16, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 40px;
+        z-index: 100;
+    }
+
+    .navbar a {
+        color: #d1d1d1;
+        text-decoration: none;
+        font-size: 1.1rem;
+        font-weight: 600;
+        transition: 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .navbar a:hover, .navbar a.active {
+        color: #fff;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+        margin-bottom: 50px;
+        text-align: center;
+    }
+
+    /* --- Main Glass Container --- */
+    .container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        width: 100%;
+        max-width: 1400px;
+    }
+
+    .glass-panel {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        border-left: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* --- Form Elements --- */
+    .input-group {
+        margin-bottom: 25px;
+    }
+
+    label {
+        display: block;
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+        color: #d1d1d1;
+        font-weight: 600;
+    }
+
+    .sub-label {
+        display: block;
+        font-size: 0.9rem;
+        color: #888;
+        margin-bottom: 15px;
+    }
+
+    textarea {
+        width: 100%;
+        padding: 18px 20px;
+        font-size: 1.1rem;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(0, 0, 0, 0.3);
+        color: #fff;
+        outline: none;
+        transition: 0.3s;
+        resize: none;
+        height: 200px;
+        line-height: 1.6;
+    }
+
+    textarea:focus {
+        border-color: #00bfa5;
+        background: rgba(0, 0, 0, 0.5);
+        box-shadow: 0 0 15px rgba(0, 191, 165, 0.3);
+    }
+
+    #promptOutput {
+        height: 380px;
+        margin-bottom: 20px;
+        font-size: 1rem;
+    }
+
+    /* --- Pro Tip Box --- */
+    .pro-tip {
+        background: rgba(0, 191, 165, 0.1);
+        border-left: 4px solid #00bfa5;
+        padding: 15px 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .pro-tip i { font-size: 1.5rem; }
+    .pro-tip-text { font-size: 0.95rem; line-height: 1.5; color: #a7ffeb; }
+
+    /* --- Buttons --- */
+    .btn-generate {
+        width: 100%;
+        padding: 20px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        background: linear-gradient(135deg, #00695c, #003d33);
+        color: white;
+        box-shadow: 0 10px 20px rgba(0, 77, 64, 0.4);
+        margin-top: auto;
+    }
+
+    .btn-generate:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 25px rgba(0, 77, 64, 0.6);
+    }
+
+    .btn-copy {
+        width: 100%;
+        padding: 16px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.05);
+        color: white;
+        transition: 0.3s;
+        margin-bottom: 20px;
+    }
+
+    .btn-copy:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .ai-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+
+    .btn-ai {
+        padding: 15px 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        gap: 5px;
+    }
+
+    /* Highlight Claude specifically for this task */
+    .btn-claude { 
+        background: linear-gradient(135deg, #d97757, #b85f42); 
+        color: #fff; 
+        box-shadow: 0 0 15px rgba(217, 119, 87, 0.4);
+        border: 2px solid #ffccbc;
+    }
+    
+    .recommended-badge {
+        position: absolute;
+        top: -10px;
+        background: #ffeb3b;
+        color: #000;
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-gemini { background: linear-gradient(135deg, #fff, #e0e0e0); color: #000; }
+    .btn-chatgpt { background: linear-gradient(135deg, #10a37f, #0d8a6b); color: #fff; }
+
+    .btn-ai:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+    .btn-claude:hover {
+        box-shadow: 0 15px 25px rgba(217, 119, 87, 0.6);
+    }
+
+    /* --- Loader --- */
+    .loader-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(11, 12, 16, 0.9);
+        backdrop-filter: blur(15px);
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.5s ease;
+    }
+
+    .loader-overlay.active {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    .spinner {
+        width: 80px;
+        height: 80px;
+        border: 6px solid rgba(255, 255, 255, 0.1);
+        border-top-color: #00bfa5;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 30px;
+    }
+
+    .loader-text {
+        font-size: 2rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
+
+    .loader-subtext {
+        font-size: 1.1rem;
+        color: #aaa;
+        margin-top: 10px;
+    }
+
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    @media (max-width: 1024px) {
+        .container { grid-template-columns: 1fr; }
+        .ai-grid { grid-template-columns: 1fr; }
+        .navbar { display: none; }
+        body { padding-top: 40px; }
+    }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="index.html">Dashboard</a>
+    <a href="content-calendar.html">Content Calendar</a>
+    <a href="viral-script-writer.html">Script Writer</a>
+    <a href="poster-prompt-writer.html">Prompt Writer</a>
+    <a href="competitor-analysis.html" class="active">Competitor Analysis</a>
+</nav>
+
+<div class="bg-shape shape1"></div>
+<div class="bg-shape shape2"></div>
+
+<h1>📊 Competitor Analysis</h1>
+
+<div class="container">
+    <div class="glass-panel">
+        
+        <div class="pro-tip">
+            <i>💡</i>
+            <div class="pro-tip-text">
+                <strong>Why Claude?</strong> For deep-dive auditing, Claude 4.6 Sonnet is highly recommended. It excels at reading complex web profiles, identifying strategic content gaps, and formatting executive summaries better than most alternatives.
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Competitor Instagram Links</label>
+            <span class="sub-label">Paste up to 3 URLs (One link per line)</span>
+            <textarea id="competitorLinks" placeholder="https://instagram.com/competitor1&#10;https://instagram.com/competitor2&#10;https://instagram.com/competitor3"></textarea>
+        </div>
+
+        <button class="btn-generate" onclick="generatePrompt()">Generate Master Prompt</button>
+    </div>
+
+    <div class="glass-panel">
+        <div class="input-group">
+            <label>Engineered Audit Prompt</label>
+            <textarea id="promptOutput" placeholder="Your highly detailed competitor audit prompt will appear here..."></textarea>
+        </div>
+
+        <button class="btn-copy" onclick="copyPrompt()">📋 Copy Prompt to Clipboard</button>
+        
+        <label style="text-align: center; margin-bottom: 25px;">Launch Prompt In:</label>
+        <div class="ai-grid">
+            <button class="btn-ai btn-gemini" onclick="launchAI('Google Gemini', 'https://gemini.google.com/app')">
+                <span style="font-size: 1.5rem;">✨</span> Gemini
+            </button>
+            <button class="btn-ai btn-chatgpt" onclick="launchAI('ChatGPT', 'https://chat.openai.com/')">
+                <span style="font-size: 1.5rem;">🧠</span> ChatGPT
+            </button>
+            <button class="btn-ai btn-claude" onclick="launchAI('Claude', 'https://claude.ai/new')">
+                <div class="recommended-badge">Recommended</div>
+                <span style="font-size: 1.5rem;">🤖</span> Claude
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="loader-overlay" id="loader">
+    <div class="spinner"></div>
+    <div class="loader-text" id="loaderText">Redirecting to AI...</div>
+    <div class="loader-subtext">Prompt copied! Just hit Ctrl+V when you arrive.</div>
+</div>
+
+<script>
+    function generatePrompt() {
+        const rawText = document.getElementById('competitorLinks').value;
+        
+        // Split by lines, trim whitespace, and remove empty lines
+        let links = rawText.split('\n')
+                           .map(link => link.trim())
+                           .filter(link => link.length > 0);
+
+        if (links.length === 0) {
+            alert("Please enter at least one competitor link.");
+            return;
+        }
+
+        // Enforce maximum 3 links
+        if (links.length > 3) {
+            alert("You entered more than 3 links. Only the first 3 will be used to ensure the AI doesn't hallucinate.");
+            links = links.slice(0, 3);
+            document.getElementById('competitorLinks').value = links.join('\n'); // Update UI to reflect truncation
+        }
+
+        const formattedLinks = links.map(link => `- ${link}`).join('\n');
+
+        const finalPrompt = `Act as an elite social media auditor, brand strategist, and growth hacker.
+
+I need a ruthless, deep-dive competitive analysis on the following Instagram profiles. Please browse these URLs to analyze their live strategy:
+
+${formattedLinks}
+
+Please evaluate these profiles and provide an executive summary structured exactly as follows:
+
+1. Core Content Pillars:
+- What 3-4 topics are they posting about most frequently? 
+- Which of these topics seems to drive the highest engagement?
+
+2. Hook & Format Analysis:
+- Are they prioritizing Reels, Carousels, or Single Images?
+- Analyze their Hooks (Visual and Textual): What psychological triggers are they using to capture attention?
+
+3. The "Gap" (Weaknesses & Opportunities):
+- Identify at least 3 untapped content opportunities, poor execution choices, or weaknesses in their strategy. Where are they leaving money on the table?
+
+4. The Action Plan (How to Steal Their Audience):
+- Based on their performance gaps, give me a strategic, 3-step action plan to outperform them in the next 30 days.
+
+Keep the analysis highly actionable, data-driven, and devoid of generic fluff. Output in clean Markdown format.`;
+
+        document.getElementById('promptOutput').value = finalPrompt;
+    }
+
+    function copyPrompt() {
+        const promptText = document.getElementById('promptOutput');
+        if(!promptText.value) {
+            alert("Please generate a prompt first!");
+            return false;
+        }
+        
+        promptText.select();
+        document.execCommand("copy");
+        return true;
+    }
+
+    function launchAI(aiName, url) {
+        const copied = copyPrompt();
+        if(!copied) return;
+
+        const loader = document.getElementById('loader');
+        const loaderText = document.getElementById('loaderText');
+        
+        loaderText.innerText = `Redirecting to ${aiName}...`;
+        loader.classList.add('active');
+
+        setTimeout(() => {
+            window.location.href = url;
+        }, 10000);
+    }
+</script>
+
+</body>
+</html>

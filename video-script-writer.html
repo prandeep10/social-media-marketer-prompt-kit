@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Viral Script Writer</title>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+    }
+
+    body {
+        background-color: #0b0c10;
+        color: #ffffff;
+        min-height: 100vh;
+        padding: 120px 40px 60px 40px;
+        position: relative;
+        overflow-x: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* --- Background Orbs (Premium Violet/Crimson mix) --- */
+    .bg-shape {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(100px);
+        z-index: -1;
+        animation: float 12s infinite ease-in-out alternate;
+    }
+
+    .shape1 {
+        width: 500px;
+        height: 500px;
+        background: #4a0033; /* Deep Crimson/Violet */
+        top: -100px;
+        left: -150px;
+    }
+
+    .shape2 {
+        width: 600px;
+        height: 600px;
+        background: #1f004d; /* Deep Indigo */
+        bottom: -200px;
+        right: -150px;
+        animation-delay: -6s;
+    }
+
+    @keyframes float {
+        0% { transform: translateY(0) translateX(0) scale(1); }
+        100% { transform: translateY(40px) translateX(40px) scale(1.05); }
+    }
+
+    /* --- Common Navbar --- */
+    .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 80px;
+        background: rgba(11, 12, 16, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 40px;
+        z-index: 100;
+    }
+
+    .navbar a {
+        color: #d1d1d1;
+        text-decoration: none;
+        font-size: 1.1rem;
+        font-weight: 600;
+        transition: 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .navbar a:hover, .navbar a.active {
+        color: #fff;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+        margin-bottom: 50px;
+        text-align: center;
+    }
+
+    /* --- Main Glass Container --- */
+    .container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        width: 100%;
+        max-width: 1400px;
+    }
+
+    .glass-panel {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        border-left: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* --- Form Elements --- */
+    .input-group {
+        margin-bottom: 25px;
+    }
+
+    label {
+        display: block;
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+        color: #d1d1d1;
+        font-weight: 600;
+    }
+
+    .optional-tag {
+        font-size: 0.8rem;
+        color: #888;
+        font-weight: 400;
+        margin-left: 10px;
+    }
+
+    input[type="text"], select, textarea {
+        width: 100%;
+        padding: 16px 20px;
+        font-size: 1rem;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(0, 0, 0, 0.3);
+        color: #fff;
+        outline: none;
+        transition: 0.3s;
+    }
+
+    select {
+        appearance: none;
+        cursor: pointer;
+    }
+
+    select option {
+        background: #111;
+        color: #fff;
+    }
+
+    input[type="text"]:focus, select:focus, textarea:focus {
+        border-color: #5c148c;
+        background: rgba(0, 0, 0, 0.5);
+        box-shadow: 0 0 15px rgba(92, 20, 140, 0.4);
+    }
+
+    textarea {
+        resize: none;
+        height: 100px;
+        line-height: 1.5;
+    }
+
+    #promptOutput {
+        height: 400px;
+    }
+
+    /* --- Buttons --- */
+    .btn-generate {
+        width: 100%;
+        padding: 20px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        background: linear-gradient(135deg, #7a004b, #2e004f);
+        color: white;
+        box-shadow: 0 10px 20px rgba(46, 0, 79, 0.4);
+        margin-top: auto;
+    }
+
+    .btn-generate:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 25px rgba(46, 0, 79, 0.6);
+    }
+
+    .btn-copy {
+        width: 100%;
+        padding: 16px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.05);
+        color: white;
+        transition: 0.3s;
+        margin-bottom: 20px;
+    }
+
+    .btn-copy:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .ai-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+
+    .btn-ai {
+        padding: 15px 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .btn-gemini { background: linear-gradient(135deg, #fff, #e0e0e0); color: #000; }
+    .btn-chatgpt { background: linear-gradient(135deg, #10a37f, #0d8a6b); color: #fff; }
+    .btn-claude { background: linear-gradient(135deg, #d97757, #b85f42); color: #fff; }
+
+    .btn-ai:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    /* --- Full Screen Loader Overlay --- */
+    .loader-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(11, 12, 16, 0.9);
+        backdrop-filter: blur(15px);
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.5s ease;
+    }
+
+    .loader-overlay.active {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    .spinner {
+        width: 80px;
+        height: 80px;
+        border: 6px solid rgba(255, 255, 255, 0.1);
+        border-top-color: #7a004b;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 30px;
+    }
+
+    .loader-text {
+        font-size: 2rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
+
+    .loader-subtext {
+        font-size: 1.1rem;
+        color: #aaa;
+        margin-top: 10px;
+    }
+
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    @media (max-width: 1024px) {
+        .container { grid-template-columns: 1fr; }
+        .ai-grid { grid-template-columns: 1fr; }
+        .navbar { display: none; }
+        body { padding-top: 40px; }
+    }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="index.html">Dashboard</a>
+    <a href="content-calendar.html">Content Calendar</a>
+    <a href="viral-script-writer.html" class="active">Script Writer</a>
+    <a href="poster-prompt-writer.html">Prompt Writer</a>
+    <a href="competitor-analysis.html">Competitor Analysis</a>
+</nav>
+
+<div class="bg-shape shape1"></div>
+<div class="bg-shape shape2"></div>
+
+<h1>🎬 Viral Script Writer</h1>
+
+<div class="container">
+    <div class="glass-panel">
+        <div class="input-group">
+            <label>Video Topic / Idea</label>
+            <input type="text" id="topic" placeholder="e.g. 3 AI tools to automate your business">
+        </div>
+        
+        <div class="input-group">
+            <label>Target Audience</label>
+            <input type="text" id="audience" placeholder="e.g. Agency owners, Freelancers">
+        </div>
+
+        <div class="input-group">
+            <label>Target View Tier (Viral Strategy)</label>
+            <select id="tier">
+                <option value="1 Million+ Views (Value + Entertainment + Emotion)">1 Million+ Views (Requires All 3 Pillars)</option>
+                <option value="100K Views (Combines 2 Pillars)">100,000+ Views (Requires 2 Pillars)</option>
+                <option value="10K Views (Focuses on 1 Pillar)">10,000+ Views (Requires 1 Pillar)</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Call to Action (CTA)</label>
+            <input type="text" id="cta" placeholder="e.g. Comment 'AI' for the tool list">
+        </div>
+
+        <div class="input-group">
+            <label>Additional Context <span class="optional-tag">(Optional)</span></label>
+            <textarea id="notes" placeholder="Specific brand names, jokes, or key takeaways..."></textarea>
+        </div>
+
+        <button class="btn-generate" onclick="generatePrompt()">Generate Prompt</button>
+    </div>
+
+    <div class="glass-panel">
+        <div class="input-group">
+            <label>Engineered Master Prompt</label>
+            <textarea id="promptOutput" placeholder="Your highly detailed script prompt will appear here..."></textarea>
+        </div>
+
+        <button class="btn-copy" onclick="copyPrompt()">📋 Copy Prompt to Clipboard</button>
+        
+        <label style="text-align: center; margin-bottom: 15px;">Launch Prompt In:</label>
+        <div class="ai-grid">
+            <button class="btn-ai btn-gemini" onclick="launchAI('Google Gemini', 'https://gemini.google.com/app')">
+                <span style="font-size: 1.5rem;">✨</span> Gemini
+            </button>
+            <button class="btn-ai btn-chatgpt" onclick="launchAI('ChatGPT', 'https://chat.openai.com/')">
+                <span style="font-size: 1.5rem;">🧠</span> ChatGPT
+            </button>
+            <button class="btn-ai btn-claude" onclick="launchAI('Claude', 'https://claude.ai/new')">
+                <span style="font-size: 1.5rem;">🤖</span> Claude
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="loader-overlay" id="loader">
+    <div class="spinner"></div>
+    <div class="loader-text" id="loaderText">Redirecting to AI...</div>
+    <div class="loader-subtext">Prompt copied! Just hit Ctrl+V when you arrive.</div>
+</div>
+
+<script>
+    function generatePrompt() {
+        const topic = document.getElementById('topic').value || '[Insert Video Topic]';
+        const audience = document.getElementById('audience').value || '[Insert Target Audience]';
+        const tier = document.getElementById('tier').value;
+        const cta = document.getElementById('cta').value || '[Insert Call to Action]';
+        const notes = document.getElementById('notes').value.trim();
+
+        let notesInstruction = "";
+        if (notes.length > 0) {
+            notesInstruction = `\nAdditional Context to weave in:\n"${notes}"\n`;
+        }
+
+        const finalPrompt = `Act as an elite social media strategist and viral video copywriter.
+
+Here are the strict Core Principles of our Social Media Content Strategy that you must follow:
+1. The Three Core Content Categories:
+   - VALUE: Educates, teaches, informs. Solves a problem or gives actionable insight.
+   - ENTERTAINMENT: Makes people laugh, smile, or stay hooked through humor, storytelling, visuals, or pacing.
+   - EMOTION: Evokes feelings like inspiration, motivation, fear, curiosity, nostalgia, or relatability.
+2. The View Breakdown Formula:
+   - 10K views = One pillar (Only value, Only entertainment, OR Only emotion).
+   - 100K views = Two pillars combined (Value+Entertainment, Emotion+Entertainment, or Value+Emotion).
+   - 1M+ views = All three combined (Value + Entertainment + Emotion). People must learn something, feel something, and enjoy the process all in one piece.
+
+--- YOUR TASK ---
+I need a highly engaging, retention-optimized video script.
+- Topic: ${topic}
+- Target Audience: ${audience}
+- Target View Tier Goal: ${tier}
+- Call to Action: ${cta}${notesInstruction}
+
+Based on my Target View Tier Goal, you MUST engineer this script to utilize the exact required combination of Value, Entertainment, and Emotion pillars mentioned in the Core Principles.
+
+Please format the output exactly as follows:
+1. Strategy Breakdown: A brief 2-sentence explanation of how you integrated the required pillars (Value/Entertainment/Emotion) into this specific idea to hit the View Tier Goal.
+2. 3 Viral Hook Options: Provide 3 distinct, high-converting opening lines to test.
+3. The Script (Table Format): Create a 2-column table.
+   - Column 1: Visuals / B-Roll / On-Screen Text (What the viewer sees. Include fast-paced editing cues).
+   - Column 2: Audio / Spoken Script (What the creator says. Keep it tight, zero fluff).
+4. Outro & CTA: Ensure the script naturally flows into the requested Call to Action.`;
+
+        document.getElementById('promptOutput').value = finalPrompt;
+    }
+
+    function copyPrompt() {
+        const promptText = document.getElementById('promptOutput');
+        if(!promptText.value) {
+            alert("Please generate a prompt first!");
+            return false;
+        }
+        
+        promptText.select();
+        document.execCommand("copy");
+        return true;
+    }
+
+    function launchAI(aiName, url) {
+        const copied = copyPrompt();
+        if(!copied) return;
+
+        const loader = document.getElementById('loader');
+        const loaderText = document.getElementById('loaderText');
+        
+        loaderText.innerText = `Redirecting to ${aiName}...`;
+        loader.classList.add('active');
+
+        setTimeout(() => {
+            window.location.href = url;
+        }, 10000);
+    }
+</script>
+
+</body>
+</html>
